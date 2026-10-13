@@ -1,17 +1,17 @@
 # Подключение OffmineSoundAPI в другой Paper-плагин (Gradle + JitPack)
 
-**Для:** OffmineSoundAPI **2.3.2**, Paper **26.3**, Java **25**.  
+**Для:** OffmineSoundAPI **2.3.3**, Paper **26.3**, Java **25**.  
 **Проверено по исходникам этой версии:** публичный класс `ElTeam.offmineSimpleVoiceElTeam.api.SoundApi`; серверный `plugin.yml` объявляет плагин как `OffmineSoundAPI`.
 
 > Это инструкция для **плагина-потребителя**, то есть вашего **другого** проекта. Не требуется копировать исходники OffmineSoundAPI в него.
 
 ## 0. Что нужно заранее
 
-1. Исходники OffmineSoundAPI должны находиться в публичном репозитории GitHub, а релиз/тег `2.3.2` — успешно собираться через [JitPack](https://jitpack.io/). Проверьте **зелёный статус сборки**, а не только появление подсказки «How to».
+1. Исходники OffmineSoundAPI должны находиться в публичном репозитории GitHub, а релиз/тег `2.3.3` — успешно собираться через [JitPack](https://jitpack.io/). Проверьте **зелёный статус сборки**, а не только появление подсказки «How to».
 2. В качестве Maven-координат используйте **точно то, что показано JitPack для вашего репозитория**. На предоставленном скриншоте:
 
    ```groovy
-   com.github.ElDiavlos:offmineSoundAPI:2.3.2
+   com.github.ElDiavlos:offmineSoundAPI:2.3.3
    ```
 
    Регистр букв важен: `offmineSoundAPI` начинается с маленькой `o`. Если вы переименовали GitHub-репозиторий или ваш JitPack показывает другое написание, берите его актуальные координаты.
@@ -52,7 +52,7 @@ plugins {
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:26.3.build.+'
-    compileOnly 'com.github.ElDiavlos:offmineSoundAPI:2.3.2'
+    compileOnly 'com.github.ElDiavlos:offmineSoundAPI:2.3.3'
 }
 
 java {
@@ -173,19 +173,19 @@ getServer().getScheduler().runTask(this, (Runnable) () -> {
 ```text
 plugins/
 ├── voicechat-....jar
-├── OffmineSoundAPI-2.3.2.jar
+├── OffmineSoundAPI-2.3.3.jar
 └── MySoundPlugin-1.0.0.jar
 ```
 
 Перезапустите сервер, добавьте звук под ID `alarm` через `/soundadmin` (доступен администраторам) и введите `/testalarm`.
 
-Громкость звуков настраивается каждым игроком в клиентском моде **Simple Voice Chat**: обычно `V` → **Регулировка громкости** → **Звуки сервера**.
+Громкость звуков настраивается каждым игроком в клиентском моде **Simple Voice Chat**: обычно `V` → **Регулировка громкости** → **Server Sounds**.
 
 ## 6. Если Gradle не скачивает API
 
 | Ошибка | Причина и решение |
 |---|---|
-| `Could not find com.github.ElDiavlos:offmineSoundAPI:2.3.2` | Убедитесь, что JitPack показывает **успешную** сборку тега `2.3.2`, координаты совпадают с сайтом **по регистру**, а репозиторий публичен. |
+| `Could not find com.github.ElDiavlos:offmineSoundAPI:2.3.3` | Убедитесь, что JitPack показывает **успешную** сборку тега `2.3.3`, координаты совпадают с сайтом **по регистру**, а репозиторий публичен. |
 | `Build was configured to prefer settings repositories over project repositories` | Перенесите `repositories` из `build.gradle` в `settings.gradle` или согласуйте режим репозиториев. |
 | `package ElTeam.offmineSimpleVoiceElTeam.api does not exist` | Проверьте, что Gradle скачал JAR нужной версии и в нём есть `api/SoundApi.class`. |
 | `No matching toolchains found` | Для Paper 26.3 требуется установленная JDK 25 либо настроенная автоматическая установка toolchain. |
@@ -201,7 +201,7 @@ plugins/
 
 ```groovy
 dependencies {
-    compileOnly files('libs/OffmineSoundAPI-2.3.2.jar')
+    compileOnly files('libs/OffmineSoundAPI-2.3.3.jar')
 }
 ```
 

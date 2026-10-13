@@ -5,9 +5,9 @@
 **Звуки сервера — через Simple Voice Chat. Управление — через нативные диалоги Minecraft.**
 
 Лёгкая библиотека звуков и публичный Java API для плагинов **Paper 26.3**.  
-Воспроизведение игроку, всем игрокам или в заданной точке мира.
+Воспроизведение игроку, всем игрокам или в заданной точке мира — **без ресурспака и без радио**.
 
-[![Version](https://img.shields.io/badge/version-2.3.2-F4D4B5?style=flat-square)](https://github.com/ElDiavlos/offmineSoundAPI/releases)
+[![Version](https://img.shields.io/badge/version-2.3.3-F4D4B5?style=flat-square)](https://github.com/ElDiavlos/offmineSoundAPI/releases)
 [![Paper](https://img.shields.io/badge/Paper-26.3-C7D5B7?style=flat-square)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/Java-25-E3AFAC?style=flat-square)](https://adoptium.net/)
 [![JitPack](https://jitpack.io/v/ElDiavlos/offmineSoundAPI.svg)](https://jitpack.io/#ElDiavlos/offmineSoundAPI)
@@ -23,10 +23,11 @@
 - **Публичный Java API** — воспроизведение звука одному игроку, всем игрокам и в указанной точке мира.
 - **Нативная админ-панель Paper Dialog API** — библиотека звуков с перелистыванием страниц, прослушивание, загрузка и копирование готовых фрагментов Java-кода.
 - **Загрузка аудио по прямой HTTP(S)-ссылке** или вручную в папку сервера.
-- **Персональная громкость** — категория **«Звуки сервера»** в настройках Simple Voice Chat (обычно `V` → регулировка громкости).
+- **Персональная громкость** — категория **«Server Sounds»** в настройках Simple Voice Chat (обычно `V` → регулировка громкости).
 - **Постоянные звуковые точки** — радиус воспроизведения, зацикливание и очередь звуков.
 - **Команды только для администрации** — скрыты от игроков без права `osv.admin`.
 - **MiniMessage HEX** — нежная кремово-персиковая палитра интерфейса.
+- **Никакого радио** — только звуковая библиотека и API.
 
 ## 📋 Требования
 
@@ -56,12 +57,12 @@
    ./gradlew clean build
    ```
 
-3. Поместите `build/libs/OffmineSoundAPI-2.3.2.jar` в папку `plugins/` сервера (вместе с JAR Simple Voice Chat).
+3. Поместите `build/libs/OffmineSoundAPI-2.3.3.jar` в папку `plugins/` сервера (вместе с JAR Simple Voice Chat).
 4. Для MP3/OGG установите **FFmpeg** и при необходимости задайте путь к нему в `plugins/OffmineSoundAPI/config.yml`.
 5. **Полностью перезапустите сервер.** Не оставляйте JAR старых версий OffmineSoundAPI рядом с новым.
 
 > [!IMPORTANT]
-> Версия 2.3.2 предоставляется как исходный проект. Полноценная сборка с реальными зависимостями Paper 26.3 и тест на работающем сервере пока **не подтверждены**. Перед использованием проверьте собственную Gradle-сборку и работу на тестовом сервере.
+> Версия 2.3.3 предоставляется как исходный проект. Полноценная сборка с реальными зависимостями Paper 26.3 и тест на работающем сервере пока **не подтверждены**. Перед использованием проверьте собственную Gradle-сборку и работу на тестовом сервере.
 
 ## 🌸 Админ-панель
 
@@ -89,7 +90,7 @@
 
 ## 🔊 Громкость через Simple Voice Chat
 
-В **2.3.2** плагин проверяет регистрацию категории `osv` («Звуки сервера») в Simple Voice Chat и при необходимости восстанавливает её. Если ползунок не появился в **V → Adjust Volumes**, выполните `/osv voicecheck`, затем полностью перезапустите сервер и переподключитесь к нему. Подробная инструкция и возможные причины — в [docs/VOLUME.md](docs/VOLUME.md).
+В **2.3.3** плагин проверяет регистрацию категории `osv` («Server Sounds») в Simple Voice Chat и при необходимости восстанавливает её. **Исправлена ошибка** `EncoderException: String too big (was 25 bytes encoded, max 16)`: имя категории сокращено до `Server Sounds` (13 байт UTF-8); ID `osv` не изменён. Если ползунок не появился в **V → Adjust Volumes**, выполните `/osv voicecheck`, затем полностью перезапустите сервер и переподключитесь к нему. Подробная инструкция и возможные причины — в [docs/VOLUME.md](docs/VOLUME.md).
 
 **Важно:** проверить отображение клиентского ползунка можно только в игре; успешное сообщение сервера о регистрации не гарантирует корректную работу конкретной версии клиентского мода.
 
@@ -136,7 +137,7 @@ dependencyResolutionManagement {
 ```groovy
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:26.3.build.+'
-    compileOnly 'com.github.ElDiavlos:offmineSoundAPI:2.3.2'
+    compileOnly 'com.github.ElDiavlos:offmineSoundAPI:2.3.3'
 }
 
 java {
@@ -145,7 +146,7 @@ java {
 ```
 
 > [!IMPORTANT]
-> Зависимость доступна, только если JitPack **успешно собрал** тег `2.3.2` (проверьте [статус сборки](https://jitpack.io/#ElDiavlos/offmineSoundAPI)). Появление инструкции «How to» само по себе не гарантирует успешную публикацию. Регистр `offmineSoundAPI` важен.
+> Зависимость доступна, только если JitPack **успешно собрал** тег `2.3.3` (проверьте [статус сборки](https://jitpack.io/#ElDiavlos/offmineSoundAPI)). Появление инструкции «How to» само по себе не гарантирует успешную публикацию. Регистр `offmineSoundAPI` важен.
 
 ### 3. `plugin.yml` другого плагина
 
@@ -226,6 +227,6 @@ OffmineSoundAPI/
 <div align="center">
 
 **OffmineSoundAPI** · Made for Minecraft Paper + Simple Voice Chat  
-<sub>Версия 2.3.2 · Система звуков и API</sub>
+<sub>Версия 2.3.3 · Без радио · Система звуков и API</sub>
 
 </div>

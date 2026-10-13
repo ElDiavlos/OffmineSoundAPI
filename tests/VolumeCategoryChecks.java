@@ -16,6 +16,8 @@ public final class VolumeCategoryChecks {
                 VolumeCategory.class.getClassLoader(), new Class<?>[]{VolumeCategory.class},
                 (proxy, method, ignored) -> switch (method.getName()) {
                     case "getId" -> "osv";
+                    case "getName" -> VoiceService.VOLUME_CATEGORY_NAME;
+                    case "getDescription" -> VoiceService.VOLUME_CATEGORY_DESCRIPTION;
                     default -> null;
                 });
         VolumeCategory.Builder builder = (VolumeCategory.Builder) Proxy.newProxyInstance(

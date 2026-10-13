@@ -95,7 +95,7 @@ public final class OffmineSimpleVoiceElTeam extends JavaPlugin implements Voicec
             voice.attach(e.getVoicechat());
             if (voice.ensureVolumeCategory()) {
                 getLogger().info("Категория громкости Simple Voice Chat зарегистрирована: "
-                        + CATEGORY_ID + " (Звуки сервера)");
+                        + CATEGORY_ID + " (" + VoiceService.VOLUME_CATEGORY_NAME + ")");
             } else {
                 getLogger().warning("Не удалось зарегистрировать категорию громкости: "
                         + voice.volumeCategoryStatus());

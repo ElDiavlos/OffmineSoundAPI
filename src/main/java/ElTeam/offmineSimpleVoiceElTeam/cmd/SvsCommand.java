@@ -47,7 +47,7 @@ public final class SvsCommand implements CommandExecutor, TabCompleter {
                         Text.msg(sender, "Voice Chat соединение игрока: "
                                 + (voice.api().get().getConnectionOf(player.getUniqueId()) != null ? "есть" : "нет"));
                     }
-                    Text.msg(sender, "Категория 'Звуки сервера' должна появиться в V → Adjust Volumes.");
+                    Text.msg(sender, "Категория 'Server Sounds' должна появиться в V → Adjust Volumes.");
                 }
                 case "code" -> {
                     if (!(sender instanceof Player p)) { Text.err(sender, "Копирование доступно только игрокам."); break; }

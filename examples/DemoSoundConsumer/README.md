@@ -2,7 +2,7 @@
 
 Это отдельный, минимальный Gradle-плагин для **Paper 26.3 / Java 25**. Команда `/testalarm` воспроизводит звук с ID `alarm` игроку, который её вызвал.
 
-1. Убедитесь, что JitPack успешно собрал `com.github.ElDiavlos:offmineSoundAPI:2.3.2` (важен регистр `offmineSoundAPI`).
+1. Убедитесь, что JitPack успешно собрал `com.github.ElDiavlos:offmineSoundAPI:2.3.3` (важен регистр `offmineSoundAPI`).
 2. Откройте **эту папку** как отдельный Gradle-проект в IntelliJ IDEA (или используйте `gradle build` с Gradle 9 и JDK 25).
 3. `settings.gradle` содержит репозитории Paper + JitPack; `build.gradle` скачивает `paper-api` и OffmineSoundAPI через `compileOnly`.
 4. После успешной сборки положите `build/libs/DemoSoundConsumer-1.0.0.jar` в `plugins/` сервера вместе с OffmineSoundAPI и Simple Voice Chat.

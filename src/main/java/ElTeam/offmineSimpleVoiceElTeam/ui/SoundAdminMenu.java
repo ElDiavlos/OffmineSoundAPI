@@ -164,7 +164,7 @@ public final class SoundAdminMenu implements Listener {
                 .base(base("<#EECFB8>♡ <#FFE7D1>Справка", List.of(
                         DialogBody.plainMessage(ui("<#F6D6B6>✦ Скачивание <#C6A799>— прямая HTTP(S)-ссылка или GitHub Blob / Dropbox.")),
                         DialogBody.plainMessage(ui("<#C6A799>Catbox не нужен: GitHub Raw, Dropbox с общим доступом или файл в папке sounds/.")),
-                        DialogBody.plainMessage(ui("<#F6D6B6>✦ Громкость <#C6A799>— V → Настройка громкости → Звуки сервера в Simple Voice Chat.")),
+                        DialogBody.plainMessage(ui("<#F6D6B6>✦ Громкость <#C6A799>— V → Настройка громкости → Server Sounds в Simple Voice Chat.")),
                         DialogBody.plainMessage(ui("<#F6D6B6>✦ HTTP 404 <#C6A799>— файл по этой ссылке не найден: проверь адрес и доступность в браузере.")),
                         DialogBody.plainMessage(ui("<#F6D6B6>✦ Форматы <#C6A799>— WAV; MP3 / OGG / FLAC через FFmpeg.")),
                         DialogBody.plainMessage(ui("<#F6D6B6>✦ Команды <#C6A799>— /soundadmin, /osv download, /osv code, /osv help."))

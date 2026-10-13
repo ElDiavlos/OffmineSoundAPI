@@ -12,11 +12,26 @@ import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 public class VoiceService {
+
+    // Simple Voice Chat 2.6.24 serializes the category name with a 16-byte UTF-8 limit.
+    // Keep these strings ASCII-only to avoid multibyte Unicode overflowing the packet.
+    public static final String VOLUME_CATEGORY_NAME = "Server Sounds";
+    public static final String VOLUME_CATEGORY_DESCRIPTION = "Offmine Sounds";
+    private static final int MAX_CATEGORY_PACKET_BYTES = 16;
+
+    private static void requirePacketSafeLabel(String field, String value) {
+        int bytes = value.getBytes(StandardCharsets.UTF_8).length;
+        if (bytes > MAX_CATEGORY_PACKET_BYTES) {
+            throw new IllegalArgumentException(field + " занимает " + bytes
+                    + " байт в UTF-8, предел " + MAX_CATEGORY_PACKET_BYTES);
+        }
+    }
 
     private static final VoiceService INSTANCE = new VoiceService();
     public static VoiceService get() { return INSTANCE; }
@@ -40,14 +55,17 @@ public class VoiceService {
             return false;
         }
         try {
+            requirePacketSafeLabel("Имя категории", VOLUME_CATEGORY_NAME);
+            // Conservative limit for the description too, to avoid similar packet errors.
+            requirePacketSafeLabel("Описание категории", VOLUME_CATEGORY_DESCRIPTION);
             if (hasVolumeCategory(current)) {
                 categoryError = "";
                 return true;
             }
             VolumeCategory category = current.volumeCategoryBuilder()
                     .setId(OffmineSimpleVoiceElTeam.CATEGORY_ID)
-                    .setName("Звуки сервера")
-                    .setDescription("Громкость звуков OffmineSoundAPI")
+                    .setName(VOLUME_CATEGORY_NAME)
+                    .setDescription(VOLUME_CATEGORY_DESCRIPTION)
                     .build();
             current.registerVolumeCategory(category);
             if (hasVolumeCategory(current)) {
@@ -65,7 +83,8 @@ public class VoiceService {
     private static boolean hasVolumeCategory(VoicechatServerApi voicechat) {
         Collection<VolumeCategory> categories = voicechat.getVolumeCategories();
         return categories != null && categories.stream().anyMatch(category ->
-                OffmineSimpleVoiceElTeam.CATEGORY_ID.equals(category.getId()));
+                OffmineSimpleVoiceElTeam.CATEGORY_ID.equals(category.getId())
+                        && VOLUME_CATEGORY_NAME.equals(category.getName()));
     }
 
     public boolean isVolumeCategoryRegistered() {
@@ -80,8 +99,8 @@ public class VoiceService {
 
     public String volumeCategoryStatus() {
         if (api == null) return "Voice Chat API недоступен";
-        if (isVolumeCategoryRegistered()) return "Звуки сервера (id=osv) зарегистрирована";
-        return categoryError.isBlank() ? "Категория отсутствует" : categoryError;
+        if (isVolumeCategoryRegistered()) return VOLUME_CATEGORY_NAME + " (id=osv) зарегистрирована";
+        return categoryError.isBlank() ? "Категория отсутствует или имеет старое название" : categoryError;
     }
     public boolean isReady() { return api != null; }
     public Optional<VoicechatServerApi> api() { return Optional.ofNullable(api); }
