@@ -1,0 +1,8 @@
+
+jdk:
+  - openjdk21
+
+before_install:
+  - chmod +x gradlew
+  - sdk install java 25-tem
+  - sdk use java 25-tem

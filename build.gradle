@@ -1,24 +1,32 @@
+
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
-group = 'ElTeam'
+group = 'com.github.ElDiavlos'
 version = '2.3.1'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
-    maven { url = 'https://maven.maxhenkel.de/repository/public' }
+
+    maven {
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+
+    maven {
+        url = 'https://maven.maxhenkel.de/repository/public'
+    }
 }
 
 dependencies {
-    // Paper changed its Maven version scheme starting with 26.1.
     compileOnly 'io.papermc.paper:paper-api:26.3.build.+'
     compileOnly 'de.maxhenkel.voicechat:voicechat-api:2.6.24'
 }
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    withSourcesJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -27,5 +35,15 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    filesMatching('plugin.yml') { expand version: version }
+    filesMatching('plugin.yml') {
+        expand version: version
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
