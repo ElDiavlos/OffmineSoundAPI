@@ -1,0 +1,8 @@
+name: DemoSoundConsumer
+version: '1.0.0'
+main: example.MySoundPlugin
+api-version: '26.3'
+depend: [OffmineSoundAPI]
+commands:
+  testalarm:
+    description: Play alarm sound from OffmineSoundAPI

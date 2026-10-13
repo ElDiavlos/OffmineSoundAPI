@@ -1,0 +1,20 @@
+name: OffmineSoundAPI
+version: '${version}'
+main: ElTeam.offmineSimpleVoiceElTeam.OffmineSimpleVoiceElTeam
+api-version: '26.3'
+depend: [voicechat]
+authors: [ElDiavlos]
+description: Sound API with hidden admin commands, voice chat volume control and dialog library (no radio)
+commands:
+  osv:
+    description: Play and manage server sounds
+    usage: /osv help
+    permission: osv.admin
+  soundadmin:
+    description: Open the sound library admin panel
+    usage: /soundadmin
+    permission: osv.admin
+permissions:
+  osv.admin:
+    description: Manage and download sounds
+    default: op

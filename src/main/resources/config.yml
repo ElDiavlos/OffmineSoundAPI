@@ -1,0 +1,15 @@
+# ffmpeg is required to play compressed formats (MP3/OGG/FLAC).
+converter:
+  enabled: true
+  executable: ffmpeg
+  timeout_seconds: 60
+# Limit decoded audio memory (mono PCM 48 kHz, about 96 KB/s).
+audio:
+  max_duration_seconds: 300
+# Import only from public HTTP(S) direct audio-file URLs.
+download:
+  max_size_mb: 20
+  timeout_seconds: 25
+beacons: []
+personal_playbacks: []
+global_playbacks: []
