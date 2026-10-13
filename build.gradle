@@ -1,25 +1,19 @@
-
 plugins {
     id 'java'
     id 'maven-publish'
 }
 
 group = 'com.github.ElDiavlos'
-version = '2.3.1'
+version = '2.3.2'
 
 repositories {
     mavenCentral()
-
-    maven {
-        url = 'https://repo.papermc.io/repository/maven-public/'
-    }
-
-    maven {
-        url = 'https://maven.maxhenkel.de/repository/public'
-    }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url = 'https://maven.maxhenkel.de/repository/public' }
 }
 
 dependencies {
+    // Paper changed its Maven version scheme starting with 26.1.
     compileOnly 'io.papermc.paper:paper-api:26.3.build.+'
     compileOnly 'de.maxhenkel.voicechat:voicechat-api:2.6.24'
 }
@@ -35,15 +29,16 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    filesMatching('plugin.yml') {
-        expand version: version
-    }
+    filesMatching('plugin.yml') { expand version: version }
 }
 
+// Coordinates shown by JitPack for github.com/ElDiavlos/offmineSoundAPI
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            groupId = 'com.github.ElDiavlos'
+            artifactId = 'offmineSoundAPI'
         }
     }
 }

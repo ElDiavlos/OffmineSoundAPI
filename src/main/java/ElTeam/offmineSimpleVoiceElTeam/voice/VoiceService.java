@@ -2,6 +2,7 @@ package ElTeam.offmineSimpleVoiceElTeam.voice;
 
 import ElTeam.offmineSimpleVoiceElTeam.OffmineSimpleVoiceElTeam;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.VolumeCategory;
 import de.maxhenkel.voicechat.api.audiochannel.*;
 import de.maxhenkel.voicechat.api.opus.OpusEncoder;
 import org.bukkit.Bukkit;
@@ -21,9 +22,67 @@ public class VoiceService {
     public static VoiceService get() { return INSTANCE; }
 
     private volatile VoicechatServerApi api;
+    private volatile String categoryError = "Simple Voice Chat ещё не инициализирован";
 
-    public void attach(VoicechatServerApi api) { this.api = api; }
-    public void detach() { this.api = null; }
+    public void attach(VoicechatServerApi api) { this.api = Objects.requireNonNull(api); }
+    public void detach() {
+        this.api = null;
+        categoryError = "Simple Voice Chat отключён";
+    }
+
+    /** Registration is global and persists for clients joining later (SVC 2.6 API).
+     *  Keeping the ID "osv" also preserves existing per-client volume preferences.
+     */
+    public synchronized boolean ensureVolumeCategory() {
+        VoicechatServerApi current = api;
+        if (current == null) {
+            categoryError = "Simple Voice Chat API недоступен";
+            return false;
+        }
+        try {
+            if (hasVolumeCategory(current)) {
+                categoryError = "";
+                return true;
+            }
+            VolumeCategory category = current.volumeCategoryBuilder()
+                    .setId(OffmineSimpleVoiceElTeam.CATEGORY_ID)
+                    .setName("Звуки сервера")
+                    .setDescription("Громкость звуков OffmineSoundAPI")
+                    .build();
+            current.registerVolumeCategory(category);
+            if (hasVolumeCategory(current)) {
+                categoryError = "";
+                return true;
+            }
+            categoryError = "Категория не найдена в Voice Chat после регистрации";
+            return false;
+        } catch (RuntimeException ex) {
+            categoryError = ex.getClass().getSimpleName() + ": " + ex.getMessage();
+            return false;
+        }
+    }
+
+    private static boolean hasVolumeCategory(VoicechatServerApi voicechat) {
+        Collection<VolumeCategory> categories = voicechat.getVolumeCategories();
+        return categories != null && categories.stream().anyMatch(category ->
+                OffmineSimpleVoiceElTeam.CATEGORY_ID.equals(category.getId()));
+    }
+
+    public boolean isVolumeCategoryRegistered() {
+        VoicechatServerApi current = api;
+        if (current == null) return false;
+        try { return hasVolumeCategory(current); }
+        catch (RuntimeException ex) {
+            categoryError = ex.getClass().getSimpleName() + ": " + ex.getMessage();
+            return false;
+        }
+    }
+
+    public String volumeCategoryStatus() {
+        if (api == null) return "Voice Chat API недоступен";
+        if (isVolumeCategoryRegistered()) return "Звуки сервера (id=osv) зарегистрирована";
+        return categoryError.isBlank() ? "Категория отсутствует" : categoryError;
+    }
     public boolean isReady() { return api != null; }
     public Optional<VoicechatServerApi> api() { return Optional.ofNullable(api); }
 
@@ -54,7 +113,9 @@ public class VoiceService {
      * This applies to personal, global and locational sounds alike.
      */
     private static <T extends AudioChannel> T categorize(T channel) {
-        if (channel != null) channel.setCategory(OffmineSimpleVoiceElTeam.CATEGORY_ID);
+        if (channel != null) {
+            channel.setCategory(OffmineSimpleVoiceElTeam.CATEGORY_ID);
+        }
         return channel;
     }
 

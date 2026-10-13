@@ -5,6 +5,7 @@ import ElTeam.offmineSimpleVoiceElTeam.api.SoundApi;
 import ElTeam.offmineSimpleVoiceElTeam.placed.PlacedSound;
 import ElTeam.offmineSimpleVoiceElTeam.ui.SoundAdminMenu;
 import ElTeam.offmineSimpleVoiceElTeam.util.Text;
+import ElTeam.offmineSimpleVoiceElTeam.voice.VoiceService;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -35,6 +36,19 @@ public final class SvsCommand implements CommandExecutor, TabCompleter {
                 case "admin", "menu" -> open(sender);
                 case "reload" -> { plugin.library().reload(); Text.msg(sender, "Звуков в библиотеке: " + api.listSounds().size()); }
                 case "sounds" -> Text.msg(sender, "Звуки: " + String.join(", ", api.listSounds()));
+                case "voicecheck" -> {
+                    VoiceService voice = VoiceService.get();
+                    Text.msg(sender, "Simple Voice Chat: " + (voice.isReady() ? "подключён" : "не готов"));
+                    if (voice.isReady() && !voice.isVolumeCategoryRegistered()) {
+                        voice.ensureVolumeCategory();
+                    }
+                    Text.msg(sender, "Громкость: " + voice.volumeCategoryStatus());
+                    if (sender instanceof Player player && voice.isReady()) {
+                        Text.msg(sender, "Voice Chat соединение игрока: "
+                                + (voice.api().get().getConnectionOf(player.getUniqueId()) != null ? "есть" : "нет"));
+                    }
+                    Text.msg(sender, "Категория 'Звуки сервера' должна появиться в V → Adjust Volumes.");
+                }
                 case "code" -> {
                     if (!(sender instanceof Player p)) { Text.err(sender, "Копирование доступно только игрокам."); break; }
                     if (args.length < 2) { Text.err(sender, "/osv code <id>"); break; }
@@ -134,7 +148,7 @@ public final class SvsCommand implements CommandExecutor, TabCompleter {
     private static void help(CommandSender sender) {
         Text.msg(sender, "/soundadmin или /osv admin — панель звуков");
         Text.msg(sender, "/osv download <id> <url> — скачать звук по ссылке");
-        Text.msg(sender, "/osv sounds / reload / code <id>");
+        Text.msg(sender, "/osv sounds / reload / code <id> / voicecheck");
         Text.msg(sender, "/osv play <ник> <id> [loop:true|false]");
         Text.msg(sender, "/osv playall <id> [loop:true|false]");
         Text.msg(sender, "/osv at <x> <y> <z> <радиус> <id> [loop]");
@@ -148,7 +162,7 @@ public final class SvsCommand implements CommandExecutor, TabCompleter {
         if (!sender.hasPermission(OffmineSimpleVoiceElTeam.PERM)) return List.of();
         if (cmd.getName().equalsIgnoreCase("soundadmin")) return List.of();
         if (args.length == 1) return matching(List.of("help", "admin", "menu", "reload", "sounds", "code", "download",
-                "play", "playall", "at", "place", "queueadd", "list", "stop", "stopat", "stopplayer", "stopglobal"), args[0]);
+                "voicecheck", "play", "playall", "at", "place", "queueadd", "list", "stop", "stopat", "stopplayer", "stopglobal"), args[0]);
         String sub = args[0].toLowerCase(Locale.ROOT);
         if (sub.equals("play") && args.length == 2 || sub.equals("stopplayer") && args.length == 2) {
             List<String> names = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toCollection(ArrayList::new));

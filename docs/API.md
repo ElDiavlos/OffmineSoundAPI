@@ -1,38 +1,40 @@
 # OffmineSoundAPI — документация Java API
 
-**Версия проекта:** 2.3.1 • **Сервер:** Paper 26.3 • **Java сервера и официальной сборки:** 25 • **Simple Voice Chat:** 2.6.24
+**Версия проекта:** 2.3.2 • **Сервер:** Paper 26.3 • **Java сервера и официальной сборки:** 25 • **Simple Voice Chat:** 2.6.24
 
-## 1. Подключение другого плагина
+## 1. Подключение другого плагина через JitPack
 
-OffmineSoundAPI — Bukkit/Paper-плагин и отдельная Java-библиотека. **Не включайте его классы в JAR своего плагина** (не используйте `implementation`/shading); достаточно `compileOnly`.
+**Пошаговая инструкция** с `settings.gradle`, `build.gradle`, `plugin.yml`, примером команды, настройкой IDE и решениями ошибок: **[`docs/OTHER_PLUGIN.md`](OTHER_PLUGIN.md)**.
 
-1. Установите `OffmineSoundAPI` и `voicechat` в `plugins/` сервера.
-2. Добавьте в **ваш** `src/main/resources/plugin.yml`:
+Главное отличие от старой схемы: теперь можно использовать автоматическую Gradle-зависимость **вместо** `libs/OffmineSoundAPI-2.3.2.jar`.
 
-```yaml
-name: MySoundPlugin
-version: '1.0.0'
-main: example.MySoundPlugin
-api-version: '26.3'
-depend: [OffmineSoundAPI]
-```
-
-`depend` обеспечивает порядок загрузки и гарантирует доступность классов. Simple Voice Chat будет загружен как зависимость OffmineSoundAPI.
-
-3. Скопируйте `OffmineSoundAPI-2.3.1.jar` в `libs/` **вашего** проекта. Пример `build.gradle` (Groovy):
+**`settings.gradle` другого проекта** (добавьте JitPack в имеющийся блок репозиториев):
 
 ```groovy
-plugins { id 'java' }
-repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository/maven-public/' } }
-dependencies {
-    compileOnly 'io.papermc.paper:paper-api:26.3.build.+'
-    compileOnly files('libs/OffmineSoundAPI-2.3.1.jar')
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven { url = uri('https://repo.papermc.io/repository/maven-public/') }
+        maven { url = uri('https://jitpack.io') }
+    }
 }
-java { toolchain.languageVersion = JavaLanguageVersion.of(25) }
-tasks.withType(JavaCompile).configureEach { options.release = 25; options.encoding = 'UTF-8' }
 ```
 
-Вместо локального JAR можно использовать собранный из исходников `build/libs/OffmineSoundAPI-2.3.1.jar`, скорректировав имя в `files(...)`.
+**`build.gradle` другого проекта**:
+
+```groovy
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:26.3.build.+'
+    compileOnly 'com.github.ElDiavlos:offmineSoundAPI:2.3.2'
+}
+```
+
+Это **точная запись из предоставленной инструкции JitPack** (артефакт `offmineSoundAPI` с маленькой буквы). Для работы требуется, чтобы у версии `2.3.2` был **зелёный статус** сборки JitPack. Если у вашего релиза другие координаты, используйте те, которые JitPack показывает для него.
+
+В `plugin.yml` другого плагина укажите `depend: [OffmineSoundAPI]`, а на сервер установите OffmineSoundAPI и Simple Voice Chat как отдельные плагины. `compileOnly` не помещает API в ваш JAR. Если используется `RepositoriesMode.FAIL_ON_PROJECT_REPOS`, не оставляйте блок `repositories` в `build.gradle`.
+
+Локальное подключение через `compileOnly files('libs/OffmineSoundAPI-2.3.2.jar')` остаётся **резервным вариантом** на случай недоступности JitPack; оба способа одновременно не нужны.
 
 ## 2. Получение API
 
@@ -150,7 +152,7 @@ api.stopAllAt();
 **Важное правило:** методы управления и воспроизведения вызывайте **только из основного потока сервера**. Если вызов нужен из асинхронной задачи, переключитесь на планировщик:
 
 ```java
-Bukkit.getScheduler().runTask(this, () -> {
+Bukkit.getScheduler().runTask(this, (Runnable) () -> {
     SoundApi api = SoundApi.get();
     if (api.isReady() && api.exists("alarm")) {
         api.play(player, "alarm");
@@ -188,12 +190,17 @@ ID регистрируются при скачивании из GUI или `/os
 
 Подробности, список команд и разрешений: `docs/INSTALL.md`.
 
-## 9. Нативное меню администратора
+## 10. Нативное меню администратора
 
-Начиная с версии **2.3.1** `/soundadmin` вызывает нативный диалог Paper 26.3 со списком звуков, полями для ID/URL и кнопками копирования готового Java-кода. API `SoundApi` не изменялся: вашему плагину достаточно получить `SoundApi.get()` и вызвать нужный метод. Подробнее: `docs/INSTALL.md` и `docs/DIALOGS.md`.
+Начиная с версии **2.3.2** `/soundadmin` вызывает нативный диалог Paper 26.3 со списком звуков, полями для ID/URL и кнопками копирования готового Java-кода. API `SoundApi` не изменялся: вашему плагину достаточно получить `SoundApi.get()` и вызвать нужный метод. Подробнее: `docs/INSTALL.md` и `docs/DIALOGS.md`.
 
 ## Громкость на стороне клиента
 
 Все созданные API аудиоканалы назначаются на категорию Simple Voice Chat с идентификатором `osv` и названием **«Звуки сервера»**. Игрок открывает `V` → «Регулировка громкости» → «Звуки сервера». Ползунок влияет на все звуки, отправленные через `SoundApi`, включая `play`, `playAll`, `playAt` и звуковые маяки. Стороннему плагину не требуется вызывать дополнительные методы изменения громкости; каждое клиентское устройство регулирует звук независимо.
 
 Команды администрирования скрыты для пользователей без `osv.admin`, но классы публичного Java API по-прежнему доступны плагинам с `depend: [OffmineSoundAPI]`.
+
+
+### Громкость Simple Voice Chat
+
+Все звуковые каналы используют одну клиентскую категорию `osv` («Звуки сервера»). Диагностика: `/osv voicecheck`. Подробности: [`VOLUME.md`](VOLUME.md).

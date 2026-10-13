@@ -13,6 +13,7 @@ import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
+import de.maxhenkel.voicechat.api.events.PlayerConnectedEvent;
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import de.maxhenkel.voicechat.api.events.VoicechatServerStoppedEvent;
 import org.bukkit.Bukkit;
@@ -90,11 +91,15 @@ public final class OffmineSimpleVoiceElTeam extends JavaPlugin implements Voicec
     @Override
     public void registerEvents(EventRegistration registration) {
         registration.registerEvent(VoicechatServerStartedEvent.class, e -> {
-            VoiceService.get().attach(e.getVoicechat());
-            var v = e.getVoicechat();
-            v.registerVolumeCategory(v.volumeCategoryBuilder()
-                    .setId(CATEGORY_ID).setName("Звуки сервера")
-                    .setDescription("Громкость звуков OffmineSoundAPI (для каждого игрока отдельно)").build());
+            VoiceService voice = VoiceService.get();
+            voice.attach(e.getVoicechat());
+            if (voice.ensureVolumeCategory()) {
+                getLogger().info("Категория громкости Simple Voice Chat зарегистрирована: "
+                        + CATEGORY_ID + " (Звуки сервера)");
+            } else {
+                getLogger().warning("Не удалось зарегистрировать категорию громкости: "
+                        + voice.volumeCategoryStatus());
+            }
             try { beacons.loadFromConfig(); }
             catch (Throwable t) { getLogger().warning("Маяки: " + t.getMessage()); }
             try { GlobalPlaybackManager.get().loadFromConfig(); }
@@ -102,6 +107,15 @@ public final class OffmineSimpleVoiceElTeam extends JavaPlugin implements Voicec
             try { PersonalPlaybackManager.get().loadFromConfig(); }
             catch (Throwable t) { getLogger().warning("Персональные звуки: " + t.getMessage()); }
             getLogger().info("Simple Voice Chat готов");
+        });
+        // A category registered on the server must be synced to both current and future clients.
+        // If voice chat was temporarily unavailable during startup, retry when a client connects.
+        registration.registerEvent(PlayerConnectedEvent.class, e -> {
+            VoiceService voice = VoiceService.get();
+            if (!voice.isVolumeCategoryRegistered() && voice.ensureVolumeCategory()) {
+                getLogger().info("Категория громкости " + CATEGORY_ID
+                        + " восстановлена при подключении Voice Chat клиента");
+            }
         });
         registration.registerEvent(VoicechatServerStoppedEvent.class, e -> {
             if (api != null) {

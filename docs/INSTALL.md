@@ -1,10 +1,10 @@
-# OffmineSoundAPI 2.3.1 — установка и работа с диалогами
+# OffmineSoundAPI 2.3.2 — установка и работа с диалогами
 
 ## Установка
 
 1. Подготовьте **Paper 26.3**, **JDK 25**, **Simple Voice Chat для Paper 26.3**. Клиентам для прослушивания нужен мод Simple Voice Chat; обычно требуется доступность UDP-порта 24454 (смотрите конфигурацию Voice Chat).
 2. Соберите проект из исходников на JDK 25: `./gradlew clean build` или `gradlew.bat clean build`.
-3. Скопируйте `build/libs/OffmineSoundAPI-2.3.1.jar` в папку `plugins/` и **уберите старый JAR** OffmineSoundAPI/OffmineSimpleVoiceElTeam.
+3. Скопируйте `build/libs/OffmineSoundAPI-2.3.2.jar` в папку `plugins/` и **уберите старый JAR** OffmineSoundAPI/OffmineSimpleVoiceElTeam.
 4. При использовании MP3, OGG, FLAC, AAC, M4A, OPUS установите FFmpeg, настройте `converter.executable` в `plugins/OffmineSoundAPI/config.yml`.
 5. Перезагрузите **сервер**, а не только сам плагин.
 
@@ -98,3 +98,8 @@
 Для Gradle нужен интернет, реальные зависимости и **JDK 25**; в `build.gradle` указаны `paper-api:26.3.build.+` и `voicechat-api:2.6.24`. `api-version` в `plugin.yml` — `26.3`. Если клиенту не отображаются диалоги, убедитесь, что запущена именно актуальная серверная версия Minecraft с поддержкой диалогов и установлен новый JAR.
 
 См. `docs/API.md` для Java API и `docs/DIALOGS.md` для компонентов интерфейса.
+
+
+## Проверка громкости в 2.3.2
+
+Если категория **Звуки сервера** отсутствует в Simple Voice Chat, используйте `/osv voicecheck` (право `osv.admin`), затем выполните полный перезапуск и переподключитесь. Подробные шаги и диагностика — в [`VOLUME.md`](VOLUME.md).
