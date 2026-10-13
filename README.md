@@ -5,7 +5,7 @@
 **Звуки сервера — через Simple Voice Chat. Управление — через нативные диалоги Minecraft.**
 
 Лёгкая библиотека звуков и публичный Java API для плагинов **Paper 26.3**.  
-Воспроизведение игроку, всем игрокам или в заданной точке мира — **без ресурспака и без радио**.
+Воспроизведение игроку, всем игрокам или в заданной точке мира.
 
 [![Version](https://img.shields.io/badge/version-2.3.2-F4D4B5?style=flat-square)](https://github.com/ElDiavlos/offmineSoundAPI/releases)
 [![Paper](https://img.shields.io/badge/Paper-26.3-C7D5B7?style=flat-square)](https://papermc.io/)
@@ -27,7 +27,6 @@
 - **Постоянные звуковые точки** — радиус воспроизведения, зацикливание и очередь звуков.
 - **Команды только для администрации** — скрыты от игроков без права `osv.admin`.
 - **MiniMessage HEX** — нежная кремово-персиковая палитра интерфейса.
-- **Никакого радио** — только звуковая библиотека и API.
 
 ## 📋 Требования
 
@@ -227,6 +226,6 @@ OffmineSoundAPI/
 <div align="center">
 
 **OffmineSoundAPI** · Made for Minecraft Paper + Simple Voice Chat  
-<sub>Версия 2.3.2 · Без радио · Система звуков и API</sub>
+<sub>Версия 2.3.2 · Система звуков и API</sub>
 
 </div>
